@@ -33,14 +33,14 @@ class SzgovSpiderPipeline(object):
 
     def process_item(self, item, spider):
 
-        print("this is in item line : ",item['file_name'])
+        # print("this is in item line : ",item['file_name'].encode('utf-8'))
 
         if item['file_name'] in self.ids_seen:
             print(" file_name repeat! ")
             pass
         else:
-            print("ready to write : ")
+            # print("ready to write : ",item['file_name'].encode('utf-8'))
             self.ids_seen.add(item['file_name'])
-            with open('./download/'+item['file_name']+".json","w") as f:
-                f.write(item['content'])
+            with open('./download/'+item['file_name']+".txt","w") as f:
+                f.write(item['content'].encode('utf-8'))
         return item

@@ -17,81 +17,57 @@ class SzGovSpiderSpider(scrapy.Spider):
 
     pageIndex = 0
 
-    def getFileLinkList(self,response):
-        file_list = response.xpath("//div[@class='contAll']//div[@class='listBox']//ul//li")
-
-        print("in getFileLinkList,is file_list == [] : ",file_list == [])
-        
-        for item in file_list:
-            link_url = item.xpath(".//a[1]/@href").extract()
-            if not ("http" in link_url):
-                # link_url[2:] 目的是去掉代表相对路径的 ./
-                link_url = self.start_urls[0]+(link_url[0].strip())[2:]
-
-                print("in FileList,link_url： ",link_url)
-            # # link_list.append(link_url)
-            # if not (link_url in self.start_urls):
-            #     self.start_urls.append(link_url)
-            
-            yield scrapy.Request(link_url, callback=self.parse)
-
-    
-    def getContext(self,response):
-        txt = response.xpath("//div[@class='contAll']")
-        # print("getContext ,txt : ",txt)
-        data = szgovItem()
-        # print(data)
-        data['file_name'] = txt.xpath(".//div[@class='contR_cont']//h1/text()").extract_first()
-        time_str = str(txt.xpath(".//div[@class='contR_cont']//div[@class='c_d_info']//span/text()").extract())
-        # print("this is time : ",time_str,type(time_str))
-
-        # TODO date is None
-        try:
-            data['date'] = self.getTime.search(time_str).group(0)
-        except Exception as e:
-            pass
-
-        # print(data['file_name'],data['date'])
-
-        # TODO file_context is []
-        file_context = txt.xpath(".//div[@class='TRS_Editor']//p[@class='MsoNormal']//text()").extract()
-
-        print("data&file_context : ",file_context)
-        text = ""
-        for con in file_context:
-            # con = con.encode('utf-8')
-            # print("in getContext,con:  ",con," \n after encode : ",con.encode('utf-8'))
-            text += str(con).encode('utf-8')
-        data['content'] = text
-        
-        print("in getContext,content : ",data['file_name'],text)
-
-        yield data
-
     def parse(self, response):
         # print(response.text)
         next_link = response.xpath("//div[@class='pageBar']").extract()
         
-        print("in parse,next_link, is [] : ",next_link == [], self.pageIndex)
+        # print("in parse,next_link, is [] : ",next_link == [], self.pageIndex)
 
         # 处于文件列表页
         if next_link != []:
-            yield self.getFileLinkList(response)
+            # yield self.getFileLinkList(response)
+            file_list = response.xpath("//div[@class='contAll']//div[@class='listBox']//ul//li")
 
-            self.pageIndex += 100
+            for item in file_list:
+                
+                time = str(item.xpath(".//span[1]/text()").extract_first())[:4]
+                if time != "2018":
+                    break
 
-            # print(self.start_urls[0]+"index_"+str(self.pageIndex)+".htm")
+                link_url = item.xpath(".//a[1]/@href").extract()
+                if not ("http" in link_url):
+                    # link_url[2:] 目的是去掉代表相对路径的 ./
+                    link_url = self.start_urls[0]+(link_url[0].strip())[2:]
+
+                yield scrapy.Request(link_url, callback=self.parse)
+
+            self.pageIndex += 1
 
             # 访问下一页列表
             yield scrapy.Request(self.start_urls[0]+"index_"+str(self.pageIndex)+".htm", callback=self.parse)
 
         # 访问到了详细内容页面
         elif response.xpath("//div[@class='contR_detail']").extract() != []:
-            print("Request File Context,response.url : ",response.url)
-            
-            yield self.getContext(response)
+            # self.getContext(response)
+            txt = response.xpath("//div[@class='contAll']")
+
+            data = szgovItem()
+
+            data['file_name'] = txt.xpath(".//div[@class='contR_cont']//h1/text()").extract_first()
+            time_str = str(txt.xpath(".//div[@class='contR_cont']//div[@class='c_d_info']//span/text()").extract())
+
+            try:
+                data['date'] = self.getTime.search(time_str).group(0)
+            except Exception as e:
+                pass
+
+            response.text.replace("<p>","\r\n <p>")
+            # file_context
+            data['content'] = "".join(txt.xpath(".//div[@class='TRS_Editor']//p[@class='MsoNormal']//text()").extract())
+
+            yield data
+            # print(response.text,data['content'].encode('utf-8'))
 
         else:
-            # print(response.xpath("//div[@class='contR_detail']").extract())
             print("Bad Request!")
             
