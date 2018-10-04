@@ -1,0 +1,51 @@
+<!-- body -->
+<div class='container'>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">借书</h4>
+    </div>
+    <div class="panel-body">
+      {{#if book}}
+      <div class="col-lg-4 col-lg-offset-4">
+        <h4 class="text-center">确认图书基本信息：</h4>
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <td width="20%">书号</td>
+              <td id="isbn">{{book.isbn}}</td>
+            </tr>
+            <tr>
+              <td width="20%">书名</td>
+              <td>{{book.title}}</td>
+            </tr>
+            <tr>
+              <td width="20%">作者</td>
+              <td>{{book.author}}</td>
+            </tr>
+            <tr>
+              <td width="20%">出版社</td>
+              <td>{{book.press}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <label for="readerId">请输入学号：</label> 
+        <input type="text" class="form-control" id="readerId" placeholder="比如:184627">
+        <h4 class="text-center">
+          {{#if book.canBorrow}}
+            <Button id="borrow" class="btn btn-success">尚有 {{book.canBorrow}} 本可借</Button>
+          {{else}}
+            <Button id="order" class="btn btn-warning">全部外借, 预约</Button>
+          {{/if}}
+        </h4>
+      </div>
+      {{else}}
+      <div class="col-lg-4 col-lg-offset-4">
+        <h3 class="btn btn-danger">Something Wrong！</h3>
+      </div>
+      {{/if}}
+      
+    </div>
+  </div>
+  {{>footer}}
+</div>

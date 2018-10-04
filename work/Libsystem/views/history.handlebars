@@ -1,0 +1,78 @@
+<div class="container">
+<div class="row">
+	<div class="col-lg-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">借阅历史</h4>
+      </div>
+      <div class="panel-body">
+
+      	<div class="row search-box">
+	        <div class="col-lg-1 col-lg-offset-2">
+	          <div id="dropdown1" class="dropdown">
+	            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+	              <span class="placeholder">图书名</span>
+	              <span class="caret"></span>
+	            </button>
+	            <ul class="dropdown-menu" role="menu">
+	              <li value="0"><a>图书名</a></li>
+	              <li value="1"><a>借阅人学号</a></li>
+	            </ul>
+	          </div>
+	        </div>
+	        <div class="col-lg-7">
+	          <div class="input-group">
+	            <input id="content" type="text" class="form-control">
+	            <span class="input-group-btn">
+	              <button id="submit_borrow" class="btn btn-default" type="button">GO！</button>
+	            </span>
+	          </div>
+	        </div>
+	      </div>
+
+
+		<!-- <h2 class="sub-header">Section title</h2> -->
+		<div class="table"></div>
+		<div class="table-responsive">
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th>书号</th>
+						<th>书名</th>
+						<th>借阅人学号</th>
+						<th>借阅人姓名</th>
+						<th>借阅日期</th>
+						<th>还书日期</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#each Info}}
+					<tr>
+						<td>{{his_isbn}}</td>
+						<td>{{title}}</td>
+						<td>{{uid}}</td>
+						<td>{{reader_name}}</td>
+						<td>{{outDate}}</td>
+						{{# if inDate}}
+							<td>{{inDate}}</td>
+							{{#if hasRenew}}
+								<span data="{{his_isbn}}" class="return btn btn-success">还书</span>
+							{{/if}}
+						{{else}}
+							<td>
+								<span data="{{bor_id}}" class="renew btn btn-warning">续借</span>
+								<span data="{{his_isbn}}" class="return btn btn-success">还书</span>
+
+							</td>
+						{{/if}}
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+		</div>
+      </div>
+    </div>
+	</div>
+</div>
+{{>footer}}
+</div>
