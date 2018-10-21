@@ -1,1 +1,10 @@
 /private/*
+
+/Course/DataMining/spider/NSFC_spider/data/*
+/Course/DataMining/spider/NSFC_spider/venv/*
+/Course/DataMining/spider/NSFC_spider/tesseract.log
+
+/Course/DataMining/spider/szgov_spider/*
+
+/work/Libsystem/node_modules/*
+/work/Libsystem/public/images/*
